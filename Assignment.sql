@@ -1,0 +1,295 @@
+-- Databricks notebook source
+CREATE DATABASE IF NOT EXISTS company_db COMMENT 'THIS IS COMPANYS DATA' 
+
+-- COMMAND ----------
+
+SHOW DATABASES
+
+-- COMMAND ----------
+
+DROP DATABASE t1 CASCADE
+
+-- COMMAND ----------
+
+USE company_db
+
+-- COMMAND ----------
+
+SHOW TABLES
+
+-- COMMAND ----------
+
+DROP TABLE worker
+
+-- COMMAND ----------
+
+CREATE TABLE worker (WORKER_ID INT NOT NULL,FIRST_NAME VARCHAR(25),LAST_NAME VARCHAR(25),SALARY INT,JOINING_DATE STRING,DEPARTMENT VARCHAR(25));
+
+
+-- COMMAND ----------
+
+INSERT INTO worker VALUES
+		(001, 'Monika', 'Arora', 100000, '14-02-20 09.00.00', 'HR'),
+		(002, 'Niharika', 'Verma', 80000, '14-06-11 09.00.00', 'Admin'),
+		(003, 'Vishal', 'Singhal', 300000, '14-02-20 09.00.00', 'HR'),
+		(004, 'Amitabh', 'Singh', 500000, '14-02-20 09.00.00', 'Admin'),
+		(005, 'Vivek', 'Bhati', 500000, '14-06-11 09.00.00', 'Admin'),
+		(006, 'Vipul', 'Diwan', 200000, '14-06-11 09.00.00', 'Account'),
+		(007, 'Satish', 'Kumar', 75000, '14-01-20 09.00.00', 'Account'),
+		(008, 'Geetika', 'Chauhan', 90000, '14-04-11 09.00.00', 'Admin');
+
+
+-- COMMAND ----------
+
+SELECT * FROM worker;
+
+-- COMMAND ----------
+
+CREATE TABLE bonus (WORKER_REF_ID INT,BONUS_AMOUNT INT,BONUS_DATE STRING);
+
+
+-- COMMAND ----------
+
+INSERT INTO Bonus VALUES
+		(001, 5000, '16-02-20'),
+		(002, 3000, '16-06-11'),
+		(003, 4000, '16-02-20'),
+		(001, 4500, '16-02-20'),
+		(002, 3500, '16-06-11');
+
+
+-- COMMAND ----------
+
+SELECT * FROM Bonus;
+
+-- COMMAND ----------
+
+CREATE TABLE Title (WORKER_REF_ID INT,WORKER_TITLE VARCHAR(25),AFFECTED_FROM STRING)
+
+-- COMMAND ----------
+
+INSERT INTO Title VALUES
+ (001, 'Manager', '2016-02-20 00:00:00'),
+ (002, 'Executive', '2016-06-11 00:00:00'),
+ (008, 'Executive', '2016-06-11 00:00:00'),
+ (005, 'Manager', '2016-06-11 00:00:00'),
+ (004, 'Asst. Manager', '2016-06-11 00:00:00'),
+ (007, 'Executive', '2016-06-11 00:00:00'),
+ (006, 'Lead', '2016-06-11 00:00:00'),
+ (003, 'Lead', '2016-06-11 00:00:00');
+
+-- COMMAND ----------
+
+SELECT * FROM Title;
+
+-- COMMAND ----------
+
+SHOW TABLES
+
+-- COMMAND ----------
+
+DROP TABLE EMPLOYEES;
+DROP TABLE EMPLOYEES1;
+DROP TABLE TRY;
+
+-- COMMAND ----------
+
+SELECT FIRST_NAME AS WORKER_NAME FROM worker;
+
+-- COMMAND ----------
+
+SELECT UPPER(FIRST_NAME) FROM worker;
+
+-- COMMAND ----------
+
+SELECT DISTINCT DEPARTMENT FROM worker;
+
+-- COMMAND ----------
+
+SELECT LEFT(FIRST_NAME,3) FROM worker;
+
+-- COMMAND ----------
+
+SELECT INSTR(FIRST_NAME,'a') FROM worker WHERE FIRST_NAME='Amitabh';
+
+-- COMMAND ----------
+
+SELECT RTRIM(FIRST_NAME) FROM worker;
+
+-- COMMAND ----------
+
+SELECT LTRIM(DEPARTMENT) FROM worker;
+
+-- COMMAND ----------
+
+SELECT DISTINCT LENGTH(DEPARTMENT) FROM worker; 
+
+-- COMMAND ----------
+
+SELECT REPLACE(FIRST_NAME,'a','A') FROM worker;
+
+-- COMMAND ----------
+
+SELECT CONCAT(FIRST_NAME,' ',LAST_NAME) AS COMPLETE_NAME FROM worker;
+
+-- COMMAND ----------
+
+SELECT * FROM worker ORDER BY FIRST_NAME;
+
+-- COMMAND ----------
+
+SELECT * FROM worker ORDER BY FIRST_NAME, DEPARTMENT DESC;
+
+-- COMMAND ----------
+
+SELECT * FROM worker WHERE FIRST_NAME='Vipul' OR FIRST_NAME='Satish';
+
+-- COMMAND ----------
+
+SELECT * FROM worker WHERE FIRST_NAME NOT IN ('Vipul','Satish');
+
+-- COMMAND ----------
+
+SELECT * FROM worker WHERE DEPARTMENT='Admin';
+
+-- COMMAND ----------
+
+SELECT * FROM worker WHERE FIRST_NAME LIKE '%a%';
+
+-- COMMAND ----------
+
+SELECT * FROM worker WHERE FIRST_NAME LIKE '%a';
+
+-- COMMAND ----------
+
+SELECT * FROM worker WHERE LENGTH(FIRST_NAME)=6 AND FIRST_NAME LIKE '%h';
+
+-- COMMAND ----------
+
+SELECT * FROM worker WHERE SALARY BETWEEN 100000 AND 500000;
+
+-- COMMAND ----------
+
+SELECT * FROM worker WHERE JOINING_DATE LIKE '14-02%';
+
+-- COMMAND ----------
+
+SELECT COUNT(FIRST_NAME) AS EMOPLOYEES_IN_ADMIN FROM worker WHERE DEPARTMENT='Admin';
+
+-- COMMAND ----------
+
+SELECT CONCAT(FIRST_NAME,'  ',LAST_NAME) AS NAME FROM worker WHERE SALARY >= 50000 AND SALARY <=100000;
+
+-- COMMAND ----------
+
+SELECT DEPARTMENT, COUNT(WORKER_ID) No_Of_Workers FROM worker GROUP BY DEPARTMENT ORDER BY No_Of_Workers DESC;
+
+-- COMMAND ----------
+
+SELECT * FROM worker w INNER JOIN title t ON w.WORKER_ID=t.WORKER_REF_ID WHERE t.WORKER_TITLE='Manager';
+
+-- COMMAND ----------
+
+SELECT WORKER_TITLE, AFFECTED_FROM, COUNT(*) FROM title GROUP BY WORKER_TITLE, AFFECTED_FROM HAVING COUNT(*) > 1;
+
+-- COMMAND ----------
+
+SELECT * FROM (SELECT *,ROW_NUMBER() OVER(ORDER BY WORKER_ID) AS ROWNUMBER FROM worker) AS t WHERE MOD(ROWNUMBER,2) <> 0;
+
+-- COMMAND ----------
+
+SELECT * FROM (SELECT *,ROW_NUMBER() OVER(ORDER BY WORKER_ID) AS ROWNUMBER FROM worker) AS t WHERE MOD(ROWNUMBER,2) =0;
+
+-- COMMAND ----------
+
+CREATE TABLE workerlike LIKE worker;
+
+-- COMMAND ----------
+
+INSERT INTO workerlike SELECT * FROM worker;
+
+-- COMMAND ----------
+
+SELECT * FROM workerlike;
+
+-- COMMAND ----------
+
+(SELECT * FROM workerlike) INTERSECT (SELECT * FROM worker);
+
+-- COMMAND ----------
+
+(SELECT * FROM worker) MINUS  (SELECT * FROM workerlike);
+
+-- COMMAND ----------
+
+SELECT NOW();
+
+-- COMMAND ----------
+
+SELECT * FROM worker ORDER BY SALARY DESC LIMIT 10;
+
+-- COMMAND ----------
+
+select * from( select FIRST_NAME, SALARY, dense_rank() over(order by SALARY desc)r from worker) where r=5;
+
+-- COMMAND ----------
+
+SELECT FIRST_NAME,SALARY,COUNT(*) FROM worker GROUP BY FIRST_NAME,SALARY HAVING COUNT(*)>1
+
+-- COMMAND ----------
+
+SELECT DISTINCT W.WORKER_ID,CONCAT(W.FIRST_NAME,' ',W.LAST_NAME) AS NAME,W.SALARY FROM worker W, worker W1 WHERE W.SALARY = W1.SALARY AND W.WORKER_ID != W1.WORKER_ID;
+
+-- COMMAND ----------
+
+SELECT * FROM (SELECT SALARY, DENSE_RANK() OVER(ORDER BY SALARY DESC) AS R FROM worker) WHERE R=2;
+
+-- COMMAND ----------
+
+SELECT FIRST_NAME, DEPARTMENT FROM worker W WHERE W.DEPARTMENT='HR' 
+UNION ALL 
+SELECT FIRST_NAME, DEPARTMENT FROM Worker W1 WHERE W1.DEPARTMENT='HR';
+
+-- COMMAND ----------
+
+(SELECT * FROM worker) INTERSECT (SELECT * FROM workerlike);
+
+-- COMMAND ----------
+
+SELECT * FROM worker WHERE WORKER_ID <= (SELECT count(WORKER_ID)/2 FROM worker);
+
+-- COMMAND ----------
+
+SELECT DEPARTMENT, COUNT(WORKER_ID) FROM worker GROUP BY DEPARTMENT HAVING COUNT(WORKER_ID) < 5; 
+
+-- COMMAND ----------
+
+SELECT DEPARTMENT, COUNT(WORKER_ID) FROM worker GROUP BY DEPARTMENT;
+
+-- COMMAND ----------
+
+SELECT * FROM (SELECT *,ROW_NUMBER() OVER(ORDER BY WORKER_ID ASC) AS R FROM worker) WHERE R=(SELECT COUNT(*) FROM worker);
+
+-- COMMAND ----------
+
+SELECT * FROM (SELECT *, ROW_NUMBER() OVER(ORDER BY WORKER_ID) AS R FROM worker) WHERE R=1;
+
+-- COMMAND ----------
+
+SELECT * FROM worker WHERE WORKER_ID > ((SELECT COUNT(*) FROM worker) - 5);
+
+-- COMMAND ----------
+
+SELECT DISTINCT SALARY FROM (SELECT *, DENSE_RANK() OVER(ORDER BY SALARY DESC) AS R FROM worker) WHERE R IN (1,2,3);
+
+-- COMMAND ----------
+
+SELECT DISTINCT SALARY FROM (SELECT *, DENSE_RANK() OVER(ORDER BY SALARY ASC) AS R FROM worker) WHERE R IN (1,2,3);
+
+-- COMMAND ----------
+
+SELECT DEPARTMENT,SUM(SALARY) FROM worker GROUP BY DEPARTMENT;
+
+-- COMMAND ----------
+
+SELECT CONCAT(FIRST_NAME,' ',LAST_NAME) AS NAME FROM worker WHERE SALARY=(SELECT MAX(SALARY) FROM worker);
